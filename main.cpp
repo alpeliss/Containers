@@ -6,6 +6,13 @@ void    capacity_test(vect test, std::string name){
     std::cout << "size  of " << name << ": " << test.size() << std::endl;
     std::cout << "max_size  of " << name << ": " << test.max_size() << std::endl;
     std::cout << "capacity  of " << name << ": " << test.capacity() << std::endl;
+    std::cout << "empty " <<  std::boolalpha << name << ": " << test.empty() << std::endl;
+    try {
+    test.reserve(test.max_size()+1);
+  }
+  catch (const std::length_error& le) {
+	  std::cerr << "Length error: " << le.what() << '\n';
+  }
     std::cout << std::endl << "             ------------------------               " << std::endl;
 }
 
@@ -40,13 +47,13 @@ int main ()
   // set some initial content:
   for (int i=1;i<10;i++) 
     myvector.push_back(i);
-  capacity_test(myvector, "1");
-  myvector.resize(5);
-  capacity_test(myvector, "2");
-  myvector.resize(8,100);
-  capacity_test(myvector, "3");
-  myvector.resize(12);
-  capacity_test(myvector, "4");
+  capacity_test(first, "1");
+  first.resize(5);
+  capacity_test(first, "2");
+  first.resize(8,100);
+  capacity_test(first, "3");
+  first.resize(12);
+  capacity_test(first, "4");
 
   return 0;
 }

@@ -2,6 +2,7 @@
 # define VECTOR_HPP
 #include <memory>
 #include <new>
+#include <stdexcept>
 
 namespace ft
 {
@@ -85,29 +86,36 @@ public:
         return this->_capacity;
     }
 
+    bool empty() const{
+        return this->_size == 0;
+    }
+
     void resize (size_type n, value_type val = value_type()){
         pointer tmp;
 
 
-
-        if (n > this->_capacity)
-            this->_alloc.allocate(n-this->_capacity, this->_p);
-        size_type i = this->_size;
-        while (i < n){
-            this->_p[i] = val;
-        }
-        
+        if (n > this->max_size())
+            throw std::length_error("Can't resize this big.");
+        tmp = NULL;
+        tmp = this->_alloc.allocate(n);
+        size_type i = 0;
         while (i < this->_size && i < n){
             tmp[i] = this->_p[i];
             i++;
         }
         while (i < n){
-            tmp[i] =  val;
+            tmp[i] = val;
             i++;
         }
-        this->_alloc.dealloc(this->_p);
+        this->_alloc.deallocate(this->_p, this->_capacity);
         this->_p = tmp;
         this->_size = n;
+        this->_capacity = n;
+    }
+
+    void reserve (size_type n){
+        if (n > this->max_size())
+            throw std::length_error("Can't reserve this much.");
     }
 
 };

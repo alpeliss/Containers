@@ -1,6 +1,20 @@
 #include <iostream>
 #include <vector>
 #include "vector.hpp"
+
+template<class vect>
+void    print_vect(vect test){
+   std::cout << "myvector contains:";
+  unsigned int i = 0;
+  for (ft::vector<int>::iterator it = test.begin() ; it != test.end(); ++it)
+  {
+    std::cout <<  "[" << test[i] << "." << test.at(i) << "." << *it << "]";
+    i++;
+    }
+  std::cout << std::endl;
+}
+
+
 template<class vect>
 void    capacity_test(vect test, std::string name){
     std::cout << "size  of " << name << ": " << test.size() << std::endl;
@@ -9,10 +23,30 @@ void    capacity_test(vect test, std::string name){
     std::cout << "empty " <<  std::boolalpha << name << ": " << test.empty() << std::endl;
     try {
     test.reserve(test.max_size()+1);
-  }
+    }
   catch (const std::length_error& le) {
 	  std::cerr << "Length error: " << le.what() << '\n';
   }
+   print_vect(test);
+    try {
+    std::cout << test.at(test.size());
+    }
+  catch (const std::out_of_range& le) {
+	  std::cerr << "Out of range: " << le.what() << '\n';
+  }
+    try {
+  test.front() += 2;
+    }
+  catch (const std::out_of_range& le) {
+	  std::cerr << "Out of range: " << le.what() << '\n';
+  }
+    try {
+  test.back() += 2;
+    }
+  catch (const std::out_of_range& le) {
+	  std::cerr << "Out of range: " << le.what() << '\n';
+  }
+   print_vect(test);
     std::cout << std::endl << "             ------------------------               " << std::endl;
 }
 

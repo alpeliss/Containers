@@ -2,14 +2,36 @@
 # define VECTOR_HPP
 #include <memory>
 #include <new>
-#include <stdexcept>
 
 namespace ft
 {
 template<class T,class Allocator = std::allocator<T> >
 class vector
 {
+    template <class Iterator> 
+    class reverse_iterator{
+
+    public:
+        typedef Iterator iterator_type;
+        typename std::iterator_traits<Iterator>::iterator_category iterator_category;
+        typename std::iterator_traits<Iterator>::value_type value_type;
+        typename std::iterator_traits<Iterator>::difference_type difference_type;
+        typename std::iterator_traits<Iterator>::pointer pointer;
+        typename std::iterator_traits<Iterator>::reference reference;
+
+    private:
+        iterator_type _p;
+    public:
+        reverse_iterator() : _p(nullptr) {};
+
+        explicit reverse_iterator (iterator_type it) : _p(it) {};
+
+        template <class Iter>
+            reverse_iterator (const reverse_iterator<Iter>& rev_it) : _p(rev_it) {};
+    };
 public:
+    typedef T* iterator;
+    typedef const T* const_iterator;
 	typedef T value_type;
     typedef Allocator allocator_type;
     typedef T& reference;
@@ -116,8 +138,60 @@ public:
     void reserve (size_type n){
         if (n > this->max_size())
             throw std::length_error("Can't reserve this much.");
+        if (n > this->_capacity)
+            this->resize(n);
     }
 
+    reference operator[] (size_type n){
+        return this->_p[n];
+    }
+
+    const_reference operator[] (size_type n) const{
+        return this->_p[n];
+    }
+
+    reference at (size_type n){
+        if (n >= this->_size)
+            throw std::out_of_range("Index not in the vector.");
+        return this->_p[n];
+    }
+
+    const_reference at (size_type n) const{
+        if (n >= this->_size)
+            throw std::out_of_range("Index not in the vector.");
+        return this->_p[n];
+    }
+
+    reference front(){
+        if (this->empty() == true)
+            throw std::out_of_range("No front in an empty vector.");
+        return this->_p[0];
+    }
+
+    const_reference front() const{
+        if (this->empty() == true)
+            throw std::out_of_range("No front in an empty vector.");
+        return this->_p[0];
+    }
+
+    reference back(){
+        if (this->empty() == true)
+            throw std::out_of_range("No back in an empty vector.");
+        return this->_p[this->_size - 1];
+    }
+
+    const_reference back() const{
+        if (this->empty() == true)
+            throw std::out_of_range("No back in an empty vector.");
+        return this->_p[this->_size - 1];
+    }
+
+    iterator begin(){
+        return this->_p;
+    }
+    iterator end(){
+        return this->_p + this->_size;
+    }
 };
 }
 

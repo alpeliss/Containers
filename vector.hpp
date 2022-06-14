@@ -8,30 +8,11 @@ namespace ft
 template<class T,class Allocator = std::allocator<T> >
 class vector
 {
-    template <class Iterator> 
-    class reverse_iterator{
-
-    public:
-        typedef Iterator iterator_type;
-        typename std::iterator_traits<Iterator>::iterator_category iterator_category;
-        typename std::iterator_traits<Iterator>::value_type value_type;
-        typename std::iterator_traits<Iterator>::difference_type difference_type;
-        typename std::iterator_traits<Iterator>::pointer pointer;
-        typename std::iterator_traits<Iterator>::reference reference;
-
-    private:
-        iterator_type _p;
-    public:
-        reverse_iterator() : _p(nullptr) {};
-
-        explicit reverse_iterator (iterator_type it) : _p(it) {};
-
-        template <class Iter>
-            reverse_iterator (const reverse_iterator<Iter>& rev_it) : _p(rev_it) {};
-    };
 public:
     typedef T* iterator;
     typedef const T* const_iterator;
+    typedef std::reverse_iterator<iterator> reverse_iterator;
+    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 	typedef T value_type;
     typedef Allocator allocator_type;
     typedef T& reference;
@@ -115,7 +96,6 @@ public:
     void resize (size_type n, value_type val = value_type()){
         pointer tmp;
 
-
         if (n > this->max_size())
             throw std::length_error("Can't resize this big.");
         tmp = NULL;
@@ -136,10 +116,21 @@ public:
     }
 
     void reserve (size_type n){
+        pointer tmp;
+
         if (n > this->max_size())
             throw std::length_error("Can't reserve this much.");
         if (n > this->_capacity)
-            this->resize(n);
+        tmp = NULL;
+        tmp = this->_alloc.allocate(n);
+        size_type i = 0;
+        while (i < this->_size && i < n){
+            tmp[i] = this->_p[i];
+            i++;
+        }
+        this->_alloc.deallocate(this->_p, this->_capacity);
+        this->_p = tmp;
+        this->_capacity = n;
     }
 
     reference operator[] (size_type n){
@@ -192,6 +183,115 @@ public:
     iterator end(){
         return this->_p + this->_size;
     }
+
+    reverse_iterator rbegin(){
+        return reverse_iterator(this->end());
+    }
+    reverse_iterator rend(){
+        return reverse_iterator(this->begin());
+    }
+
+
+    void assign (size_type n, const value_type& val) {
+        this->_alloc.deallocate(this->_p, this->_capacity);
+        vector tmp(n, val);
+        this->_p = tmp._p;
+        this->_size = tmp._size;
+        this->_capacity = tmp._capacity;
+    }
+
+    void assign (int n, T val) {
+        this->_alloc.deallocate(this->_p, this->_capacity);
+        vector tmp(n, val);
+        this->_p = tmp._p;
+        this->_size = tmp._size;
+        this->_capacity = tmp._capacity;
+    }
+
+   template <class InputIterator>
+    void assign (InputIterator first, InputIterator last){
+        this->_alloc.deallocate(this->_p, this->_capacity);
+        InputIterator tmp = first;
+        unsigned int i = 0;
+        while (tmp != last){
+            tmp++;
+            i++;
+        }
+	    this->_p = _alloc.allocate(i);
+        this->_size = i;
+	    this->_capacity = i;
+
+        unsigned int j = 0;
+        while (j < i){
+            this->_p[j] = *first;
+            first++;
+            j++;
+        }
+    }
+
+    void push_back (const value_type& val){
+        if (this->_capacity <= this->_size)
+            this->reserve(2 * this->_size + 1);
+        this->_p[this->_size] = val;
+        this->_size++;
+    }
+
+	void pop_back(void) {
+        if (this->empty() == true)
+            throw std::out_of_range("No pop_back in an empty vector.");
+		this->_p[this->_size - 1].value_type::~value_type();
+        this->_size--;
+	}
+
+    iterator insert (iterator position, const value_type& val){
+        iterator tmp = this->begin();
+        //if (position < tmp)
+        //     throw std::out_of_range("Impossible to insert before the beginning."); 
+        unsigned int i = position - tmp;
+       /* while (tmp != position){
+            tmp++;
+            i++;
+            std::cout << "a\n";
+        }*/
+        std::cout << i << "ici\n";
+        if (i <= this->_size)
+        {
+            if (this->_capacity <= this->_size)
+                this->reserve(2 * this->_size + 1);
+            T tmp = this->_p[i];
+            this->_p[i] = val;
+            this->_p[i + 1] = tmp;
+            i++;
+            while (i < this->_size){
+                tmp = this->_p[i];
+                this->_p[i] = this->_p[i + 1];
+                this->_p[i + 1]  = tmp;
+                i++;
+            }
+            this->_size++;
+        }
+        else{
+            while (i > this->_size){
+                this->push_back(value_type());
+            }
+            this->push_back(val);
+        }
+        return (position);
+    }
+
+    void insert (iterator position, size_type n, const value_type& val){
+        if (n == 0)
+            return;
+        this->insert(position, val);
+        std::cout << n << std::endl;
+        this->insert(++position, n-1,val);
+    }
+
+    /*template <class InputIterator>
+    void insert (iterator position, InputIterator first, InputIterator last){
+
+    }*/
+
 };
 }
 

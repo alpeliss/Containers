@@ -2,7 +2,7 @@ NAME = containers
 
 SRCS =  main.cpp
 
-CXXFLAGS = -Wall -Wextra -Werror
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
 OBJ 		= 	$(SRCS:.cpp=.o)
 

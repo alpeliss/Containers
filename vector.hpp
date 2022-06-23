@@ -2,6 +2,7 @@
 # define VECTOR_HPP
 #include <memory>
 #include <new>
+#include <unistd.h>
 
 namespace ft
 {
@@ -56,11 +57,28 @@ public:
     }
 
     //range constructor	
-    /*template <class InputIterator>
+    template <class InputIterator>
         vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()){
-            _alloc = alloc;
+            unsigned int i = 0;
+            InputIterator   tmp;
 
-        }*/
+            tmp = first;
+            while (tmp != last){
+                tmp++;
+                i++;
+            }
+            this->_alloc = alloc;
+		    this->_size = i;
+		    this->_capacity = i;    
+            this->_p = this->_alloc.allocate(i);
+            i = 0;
+            while (first != last){
+                this->_p[i] = *first;
+                first++;
+                i++;
+            }
+
+        }
 
     //copy constructor
     vector (const vector& x){
@@ -180,7 +198,16 @@ public:
     iterator begin(){
         return this->_p;
     }
+
+    const_iterator begin() const{
+        return this->_p;
+    }
+
     iterator end(){
+        return this->_p + this->_size;
+    }
+
+    const_iterator end() const{
         return this->_p + this->_size;
     }
 
@@ -200,13 +227,13 @@ public:
         this->_capacity = tmp._capacity;
     }
 
-    void assign (int n, T val) {
+   /* void assign (int n, T val) {
         this->_alloc.deallocate(this->_p, this->_capacity);
         vector tmp(n, val);
         this->_p = tmp._p;
         this->_size = tmp._size;
         this->_capacity = tmp._capacity;
-    }
+    }*/
 
    template <class InputIterator>
     void assign (InputIterator first, InputIterator last){
@@ -243,54 +270,64 @@ public:
         this->_size--;
 	}
 
-    iterator insert (iterator position, const value_type& val){
-        iterator tmp = this->begin();
-        //if (position < tmp)
-        //     throw std::out_of_range("Impossible to insert before the beginning."); 
-        unsigned int i = position - tmp;
-       /* while (tmp != position){
-            tmp++;
+    
+	void clear (void)
+	{
+        unsigned int i = 0;
+		while (i < this->_size){
+			this->_alloc.destroy(this->_p + i);
             i++;
-            std::cout << "a\n";
-        }*/
-        std::cout << i << "ici\n";
-        if (i <= this->_size)
-        {
-            if (this->_capacity <= this->_size)
-                this->reserve(2 * this->_size + 1);
-            T tmp = this->_p[i];
-            this->_p[i] = val;
-            this->_p[i + 1] = tmp;
-            i++;
-            while (i < this->_size){
-                tmp = this->_p[i];
-                this->_p[i] = this->_p[i + 1];
-                this->_p[i + 1]  = tmp;
-                i++;
-            }
-            this->_size++;
         }
-        else{
-            while (i > this->_size){
-                this->push_back(value_type());
-            }
-            this->push_back(val);
-        }
-        return (position);
-    }
+		this->_size = 0;
+	}
 
-    void insert (iterator position, size_type n, const value_type& val){
-        if (n == 0)
-            return;
-        this->insert(position, val);
-        std::cout << n << std::endl;
-        this->insert(++position, n-1,val);
-    }
+    iterator	insert(iterator position, const value_type &val) {
+	difference_type idx = position - this->begin();
 
-    /*template <class InputIterator>
+	this->insert(position, 1, val);
+	return (iterator(this->begin() + idx));
+}
+
+    void	insert(iterator position, size_type n, const value_type &val) {
+	difference_type const	idx = position - this->begin();
+	difference_type const	old_end_idx = this->end() - this->begin();
+	iterator				old_end, end;
+
+	this->resize(this->_size + n);
+
+	end = this->end();
+	position = this->begin() + idx;
+	old_end = this->begin() + old_end_idx;
+	while (old_end != position)
+		*--end = *--old_end;
+	while (n-- > 0)
+		*position++ = val;
+}
+
+    template <class InputIterator>
     void insert (iterator position, InputIterator first, InputIterator last){
 
-    }*/
+	difference_type const	idx = position - this->begin();
+	difference_type const	old_end_idx = this->end() - this->begin();
+	iterator				old_end, end;
+    unsigned int i = 0;
+    InputIterator tmp;
+
+    tmp = first;
+    while (tmp != last){
+        tmp++;
+        i++;
+    }
+	this->resize(this->_size + i);
+
+	end = this->end();
+	position = this->begin() + idx;
+	old_end = this->begin() + old_end_idx;
+	while (old_end != position)
+		*--end = *--old_end;
+	while (first != last)
+		*position++ = *first++;
+    }
 
 };
 }

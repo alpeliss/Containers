@@ -1,12 +1,12 @@
 NAME = containers
 
-SRCS =  main.cpp
+SRCS =  main.cpp 
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
 OBJ 		= 	$(SRCS:.cpp=.o)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) 
 	@clang++ -o $(NAME) $(OBJ)
 
 all: $(NAME)

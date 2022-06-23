@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <list>
 #include "vector.hpp"
 
 template<class vect>
@@ -178,7 +179,30 @@ void  test_front_back(vect test){
 
 }
 
-int main ()
+template<class vect>
+void  test_clear(vect test){
+  vect myvector;
+  myvector.push_back (100);
+  myvector.push_back (200);
+  myvector.push_back (300);
+
+  test.empty();
+  std::cout << "myvector contains:";
+  for (unsigned i=0; i<myvector.size(); i++)
+    std::cout << ' ' << myvector[i];
+  std::cout << '\n';
+
+  myvector.clear();
+  myvector.push_back (1101);
+  myvector.push_back (2202);
+
+  std::cout << "myvector contains:";
+  for (unsigned i=0; i<myvector.size(); i++)
+    std::cout << ' ' << myvector[i];
+  std::cout << '\n';
+}
+
+/*int main ()
 {
 
   ft::vector<int> vide;         // vector int empty
@@ -187,20 +211,86 @@ int main ()
   ft::vector<double> v_double (4,42.42);// vector double  
   ft::vector<double> copy (v_double);// copy vector double     
 
-/*
+
   test_capacity(v_int, "v_int");
   test_front_back(v_int);
   test_other(v_int);
   test_reverse(v_int);
   test_assign(v_char);
   test_push_back(v_int);
-  test_pop_back(v_int);*/
+  test_pop_back(v_int);
   //test_insert(v_int);
-  print_vect(v_int);
-  v_int.insert(v_int.begin() + 4, 4,12);
-  v_int.insert(v_int.end() + 12, 120);
-  print_vect(v_int);
-  
+  //print_vect(v_int);
+ // v_int.insert(v_int.begin() + 4, 4,12);
+  //v_int.insert(v_int.end() + 12, 120);
+ // print_vect(v_int);
+  test_clear(v_int);
 
   return 0;
+}*/
+
+#define TESTED_TYPE std::string
+#define T_SIZE_TYPE typename ft::vector<T>::size_type
+
+template <typename T>
+void	printSize(ft::vector<T> const &vct, bool print_content = true)
+{
+	const T_SIZE_TYPE size = vct.size();
+	const T_SIZE_TYPE capacity = vct.capacity();
+	const std::string isCapacityOk = (capacity >= size) ? "OK" : "KO";
+	// Cannot limit capacity's max value because it's implementation dependent
+
+	std::cout << "size: " << size << std::endl;
+	std::cout << "capacity: " << isCapacityOk << std::endl;
+	std::cout << "max_size: " << vct.max_size() << std::endl;
+	if (print_content)
+	{
+		typename ft::vector<T>::const_iterator it = vct.begin();
+		typename ft::vector<T>::const_iterator ite = vct.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << *it << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
 }
+
+
+void	checkErase(ft::vector<TESTED_TYPE> const &vct,
+					ft::vector<TESTED_TYPE>::const_iterator const &it)
+{
+	static int i = 0;
+	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
+	printSize(vct);
+}
+
+int		main(void)
+{
+	ft::vector<TESTED_TYPE> vct(10);
+
+	for (unsigned long int i = 0; i < vct.size(); ++i)
+		vct[i] = std::string((vct.size() - i), i + 65);
+	printSize(vct);
+
+	checkErase(vct, vct.erase(vct.begin() + 2));
+
+	checkErase(vct, vct.erase(vct.begin()));
+	checkErase(vct, vct.erase(vct.end() - 1));
+
+	checkErase(vct, vct.erase(vct.begin(), vct.begin() + 3));
+	checkErase(vct, vct.erase(vct.end() - 3, vct.end() - 1));
+
+	vct.push_back("Hello");
+	vct.push_back("Hi there");
+	printSize(vct);
+	checkErase(vct, vct.erase(vct.end() - 3, vct.end()));
+
+	vct.push_back("ONE");
+	vct.push_back("TWO");
+	vct.push_back("THREE");
+	vct.push_back("FOUR");
+	printSize(vct);
+	checkErase(vct, vct.erase(vct.begin(), vct.end()));
+
+	return (0);
+}
+

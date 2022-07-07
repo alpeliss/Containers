@@ -1,236 +1,77 @@
-#include <iostream>
-#include <vector>
-#include <list>
+
 #include "vector.hpp"
+#include <iostream>
+#include <unistd.h>
+#include <list>
 
-template<class vect>
-void    print_vect(vect test){
-   std::cout << "myvector contains:";
-  unsigned int i = 0;
-  typename vect::iterator it;
-  for ( it = test.begin(); it != test.end(); ++it)
-  {
-    std::cout <<  "[" << test[i] << "." << test.at(i) << "." << *it << "]";
-    i++;
-    }
-  std::cout << std::endl;
-}
-
-template<class vect>
-void    test_push_back(vect test){
-  vect myvector;
-  int myint;
-
-  test.capacity();
-  std::cout << "Please enter some integers (enter 0 to end):\n";
-
-  do {
-    std::cin >> myint;
-    myvector.push_back (myint);
-  } while (myint);
-
-  std::cout << "myvector stores " << int(myvector.size()) << " numbers.\n";
-}
-
-
-template<class vect>
-void    test_pop_back(vect test){
-  vect myvector;
-  int sum (0);
-  myvector.push_back (100);
-  myvector.push_back (200);
-  myvector.push_back (300);
-
-  test.capacity();
-  while (!myvector.empty())
-  {
-    sum+=myvector.back();
-    myvector.pop_back();
-  }
-
-  std::cout << "The elements of myvector add up to " << sum << '\n';
-
-}
-
-template<class vect>
-void    test_assign(vect test){
-  vect first;
-  vect second;
-  vect third;
-
-  test.capacity();
-  first.assign (7, 'c');             // 7 ints with a value of 100
-
-  typename vect::iterator it;
-  it=first.begin()+1;
-
-  second.assign (it,first.end()-1); // the 5 central values of first
-
-  int myints[] = {1776,7,4};
-  third.assign (myints,myints+3);   // assigning from array.
-
-  std::cout << "Size of first: " << int (first.size()) << '\n';
-  std::cout << "Size of second: " << int (second.size()) << '\n';
-  std::cout << "Size of third: " << int (third.size()) << '\n';
-  return ;
-}
-
-template<class vect>
-void    test_reverse(vect test){
-
-
-  int i=0;
-
-  typename vect::reverse_iterator rit = test.rbegin();
-  for (; rit!= test.rend(); ++rit)
-    *rit = ++i;
-  std::cout << "myvector contains:";
-  for (ft::vector<int>::iterator it = test.begin(); it != test.end(); ++it)
-    std::cout << ' ' << *it;
-  std::cout << '\n';
-}
-
-template<class vect>
-void    test_capacity(vect test, std::string name){
-    std::cout << "size  of " << name << ": " << test.size() << std::endl;
-    std::cout << "max_size  of " << name << ": " << test.max_size() << std::endl;
-    std::cout << "capacity  of " << name << ": " << test.capacity() << std::endl;
-    std::cout << "empty " <<  std::boolalpha << name << ": " << test.empty() << std::endl;
-    try {
-    test.reserve(test.max_size()+1);
-    }
-  catch (const std::length_error& le) {
-	  std::cerr << "Length error: " << le.what() << '\n';
-  }
-   print_vect(test);
-    try {
-    std::cout << test.at(test.size());
-    }
-  catch (const std::out_of_range& le) {
-	  std::cerr << "Out of range: " << le.what() << '\n';
-  }
- 
-    std::cout << std::endl << "             ------------------------               " << std::endl;
-}
-
-
-template<class vect>
-void  test_other(vect test){
-    try {
-    test.reserve(test.max_size()+1);
-    }
-  catch (const std::length_error& le) {
-	  std::cerr << "Length error: " << le.what() << '\n';
-  }
-   print_vect(test);
-    try {
-    std::cout << test.at(test.size());
-    }
-  catch (const std::out_of_range& le) {
-	  std::cerr << "Out of range: " << le.what() << '\n';
-  }
- 
-    std::cout << std::endl << "             ------------------------               " << std::endl;
-}
-
-template<class vect>
-void  test_insert(vect test){
-  vect myvector (3,100);
-  typename vect::iterator it;
-
-  test.empty();
-  it = myvector.begin();
-  it = myvector.insert ( it , 200 );
-
-  myvector.insert (it,2,300);
-
-  // "it" no longer valid, get a new one:
-  it = myvector.begin();
-
-  vect anothervector (2,400);
- // myvector.insert (it+2,anothervector.begin(),anothervector.end());
-
-  //int myarray [] = { 501,502,503 };
-  //myvector.insert (myvector.begin(), myarray, myarray+3);
-
-  std::cout << "myvector contains:";
-  for (it=myvector.begin(); it<myvector.end(); it++)
-    std::cout << ' ' << *it;
-  std::cout << '\n';
-
-}
-
-template<class vect>
-void  test_front_back(vect test){
-  try {
-  test.front() += 2;
-    }
-  catch (const std::out_of_range& le) {
-	  std::cerr << "Out of range: " << le.what() << '\n';
-  }
-    try {
-  test.back() += 2;
-    }
-  catch (const std::out_of_range& le) {
-	  std::cerr << "Out of range: " << le.what() << '\n';
-  }
-   print_vect(test);
-    std::cout << std::endl << "             ------------------------               " << std::endl;
-
-}
-
-template<class vect>
-void  test_clear(vect test){
-  vect myvector;
-  myvector.push_back (100);
-  myvector.push_back (200);
-  myvector.push_back (300);
-
-  test.empty();
-  std::cout << "myvector contains:";
-  for (unsigned i=0; i<myvector.size(); i++)
-    std::cout << ' ' << myvector[i];
-  std::cout << '\n';
-
-  myvector.clear();
-  myvector.push_back (1101);
-  myvector.push_back (2202);
-
-  std::cout << "myvector contains:";
-  for (unsigned i=0; i<myvector.size(); i++)
-    std::cout << ' ' << myvector[i];
-  std::cout << '\n';
-}
-
-/*int main ()
-{
-
-  ft::vector<int> vide;         // vector int empty
-  ft::vector<int> v_int(1,100);    // vector int                
-  ft::vector<char> v_char (4,'c'); // vector char  
-  ft::vector<double> v_double (4,42.42);// vector double  
-  ft::vector<double> copy (v_double);// copy vector double     
-
-
-  test_capacity(v_int, "v_int");
-  test_front_back(v_int);
-  test_other(v_int);
-  test_reverse(v_int);
-  test_assign(v_char);
-  test_push_back(v_int);
-  test_pop_back(v_int);
-  //test_insert(v_int);
-  //print_vect(v_int);
- // v_int.insert(v_int.begin() + 4, 4,12);
-  //v_int.insert(v_int.end() + 12, 120);
- // print_vect(v_int);
-  test_clear(v_int);
-
-  return 0;
-}*/
-
-#define TESTED_TYPE std::string
 #define T_SIZE_TYPE typename ft::vector<T>::size_type
+
+
+
+#ifndef BASE_HPP
+# define BASE_HPP
+
+#  define TESTED_NAMESPACE std
+
+# include <iostream>
+# include <string>
+
+// --- Class foo
+template <typename T>
+class foo {
+	public:
+		typedef T	value_type;
+
+		foo(void) : value(), _verbose(false) { };
+		foo(value_type src, const bool verbose = false) : value(src), _verbose(verbose) { };
+		foo(foo const &src, const bool verbose = false) : value(src.value), _verbose(verbose) { };
+		~foo(void) { if (this->_verbose) std::cout << "~foo::foo()" << std::endl; };
+		void m(void) { std::cout << "foo::m called [" << this->value << "]" << std::endl; };
+		void m(void) const { std::cout << "foo::m const called [" << this->value << "]" << std::endl; };
+		foo &operator=(value_type src) { this->value = src; return *this; };
+		foo &operator=(foo const &src) {
+			if (this->_verbose || src._verbose)
+				std::cout << "foo::operator=(foo) CALLED" << std::endl;
+			this->value = src.value;
+			return *this;
+		};
+		value_type	getValue(void) const { return this->value; };
+		void		switchVerbose(void) { this->_verbose = !(this->_verbose); };
+
+		operator value_type(void) const {
+			return value_type(this->value);
+		}
+	private:
+		value_type	value;
+		bool		_verbose;
+};
+
+template <typename T>
+std::ostream	&operator<<(std::ostream &o, foo<T> const &bar) {
+	o << bar.getValue();
+	return o;
+}
+// --- End of class foo
+
+template <typename T>
+T	inc(T it, int n)
+{
+	while (n-- > 0)
+		++it;
+	return (it);
+}
+
+template <typename T>
+T	dec(T it, int n)
+{
+	while (n-- > 0)
+		--it;
+	return (it);
+}
+
+#endif /* BASE_HPP */
+
+
 
 template <typename T>
 void	printSize(ft::vector<T> const &vct, bool print_content = true)
@@ -248,49 +89,64 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 		typename ft::vector<T>::const_iterator it = vct.begin();
 		typename ft::vector<T>::const_iterator ite = vct.end();
 		std::cout << std::endl << "Content is:" << std::endl;
-		for (; it != ite; ++it)
+		bool t =  it == ite;
+		std::cout << "ici" << t;
+		for (; it != ite; ++it){
+		//for (unsigned int i = 0; i != size; ++i){
+		//	++it;
 			std::cout << "- " << *it << std::endl;
+		}
 	}
 	std::cout << "###############################################" << std::endl;
 }
 
 
-void	checkErase(ft::vector<TESTED_TYPE> const &vct,
-					ft::vector<TESTED_TYPE>::const_iterator const &it)
-{
-	static int i = 0;
-	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
-	printSize(vct);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int		main(void)
 {
-	ft::vector<TESTED_TYPE> vct(10);
+	const int size = 5;
+	ft::vector<int> vct(size);
+	ft::vector<int>::reverse_iterator it = vct.rbegin();
+	ft::vector<int>::const_reverse_iterator ite(vct.rbegin());
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = std::string((vct.size() - i), i + 65);
-	printSize(vct);
+	for (int i = 0; i < size; ++i)
+		it[i] = (size - i) * 5;
 
-	checkErase(vct, vct.erase(vct.begin() + 2));
+	it = it + 5;
+	it = 1 + it;
+	it = it - 4;
+	std::cout << *(it += 2) << std::endl;
+	std::cout << *(it -= 1) << std::endl;
 
-	checkErase(vct, vct.erase(vct.begin()));
-	checkErase(vct, vct.erase(vct.end() - 1));
+	*(it -= 2) = 42;
+	*(it += 2) = 21;
 
-	checkErase(vct, vct.erase(vct.begin(), vct.begin() + 3));
-	checkErase(vct, vct.erase(vct.end() - 3, vct.end() - 1));
+	std::cout << "const_ite +=/-=: " << *(ite += 2) << " | " << *(ite -= 2) << std::endl;
 
-	vct.push_back("Hello");
-	vct.push_back("Hi there");
-	printSize(vct);
-	checkErase(vct, vct.erase(vct.end() - 3, vct.end()));
+	std::cout << "(it == const_it): " << (ite == it) << std::endl;
+//	std::cout << "(const_ite - it): " << (ite - it) << std::endl;
+	std::cout << "(ite + 3 == it): " << (ite + 3 == it) << std::endl;
 
-	vct.push_back("ONE");
-	vct.push_back("TWO");
-	vct.push_back("THREE");
-	vct.push_back("FOUR");
-	printSize(vct);
-	checkErase(vct, vct.erase(vct.begin(), vct.end()));
-
+	printSize(vct, true);
 	return (0);
 }
-

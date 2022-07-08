@@ -40,8 +40,6 @@ namespace ft {
 			return (this->_ptr == b._ptr); 
 		};
 		virtual bool	operator!=(const base_it &b) const{ 
-			std::cout << "la\n" << b._ptr << "\n";
-			std::cout << this->_ptr << "\n";
 			return (this->_ptr != b._ptr); 
 		};
 

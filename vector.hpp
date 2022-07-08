@@ -42,7 +42,7 @@ public:
 
 	reverse(void) {};
 	reverse(iterator ptr) { _ptr = ptr; };
-	reverse(const_iterator  &src) { *this = src; } ;
+	reverse(const_iterator  &src) {  *this = src; } ;
 	reverse(const reverse  &src) { *this = src; } ;
 	reverse &operator=(reverse const &src) { _ptr = src._ptr; return (*this); };
 
@@ -50,19 +50,30 @@ public:
 
 
 	// BOOLEANS
-	bool operator ==(reverse const& b) const { return (_ptr == b._ptr); };
+	bool operator ==(reverse const& b) const { 
+        return (this->base() == b.base()); 
+    };
 	bool operator !=(reverse const& b) const { return (_ptr != b._ptr); };
-	bool operator >(reverse const& b) const { return (_ptr > b._ptr); };
-	bool operator <(reverse const& b) const { return (_ptr < b._ptr); };
-	bool operator >=(reverse const& b) const { return (_ptr >= b._ptr); };
-	bool operator <=(reverse const& b) const { return (_ptr <= b._ptr); };
+	bool operator >(reverse const& b) const { 
+        return (_ptr < b._ptr); 
+        };
+	bool operator <(reverse const& b) const { return (_ptr > b._ptr); };
+	bool operator >=(reverse const& b) const { return (_ptr <= b._ptr); };
+	bool operator <=(reverse const& b) const { return (_ptr >= b._ptr); };
 
 	// ARITHMETICS
-	reverse operator +(difference_type b) const { return (reverse(_ptr - b)); }; // a + b
-	reverse operator -(difference_type b) const { return (reverse(_ptr + b)); }; // a - b
+	reverse operator +(difference_type b) const {   
+        reverse<iterator> tmp(_ptr - b);
+        return tmp; 
+    };
 
-	difference_type operator +(reverse b) { return (_ptr - b._ptr); }; // a + b
-	difference_type operator -(reverse b) { return (_ptr + b._ptr); }; // a - b
+	reverse operator -(difference_type b) const {    
+        reverse<iterator> tmp(_ptr + b);
+        return (tmp); 
+    };
+
+	difference_type operator +(const reverse b) { return (_ptr - b._ptr); }; // a + b
+	//difference_type operator -(const reverse<T> b) { return (_ptr + b._ptr); }; // a - b
 
     friend reverse	operator+(difference_type n, const reverse &rhs)
 			{ return rhs.operator +(n); };
@@ -73,14 +84,21 @@ public:
 	reverse operator --(int) { _ptr++; return (reverse(_ptr - 1)); };	// a--
 
 	//COMPOUND ASSIGNMENTS
-	reverse operator +=(difference_type b) { _ptr -= b; return (*this); };	// a += b
-	reverse operator -=(difference_type b) { _ptr += b; return (*this);};	// a -= b
+	reverse &operator +=(difference_type b) { 
+        this->_ptr = this->_ptr - b; 
+        return (*this); 
+    };
+
+	reverse &operator -=(difference_type b) { 
+        this->_ptr = this->_ptr + b; ; 
+        return (*this);
+    };	
 
 	//DEREFERENCING & ADDRESS STUFF
 	reference operator *() { return (*_ptr); };											// *a
 	const_reference operator *() const { return (*_ptr); };								// *a
-	reference operator [](difference_type b) { return (*(_ptr + b)); };					// a[]
-	const_reference operator [](difference_type b) const { return (*(_ptr + b)); };		// a[]
+	reference operator [](difference_type b) { return (*(_ptr - b)); };					// a[]
+	const_reference operator [](difference_type b) const { return (*(_ptr - b)); };		// a[]
 	pointer operator ->() { return (_ptr); };											// a->b
 	pointer operator ->() const { return (_ptr); };	
     
@@ -104,9 +122,10 @@ public:
 
 	ConstReverseIterator(void) {};
 	ConstReverseIterator(const_iterator src) { this->_ptr = src;} ;
+	ConstReverseIterator(iterator src) { this->_ptr = src;} ;
 	ConstReverseIterator(const reverse<iterator>  &src) { this-> _ptr = src.operator->();  } ;
     
-	ConstReverseIterator(ConstReverseIterator  &src)  { *this = src; } ;
+	ConstReverseIterator(const ConstReverseIterator  &src)  { *this = src; } ;
     ConstReverseIterator &operator=(ConstReverseIterator<iterator> const &src) { _ptr = src._ptr; return (*this); };
 
 
@@ -114,25 +133,29 @@ public:
 
 
 	// BOOLEANS
-	bool operator ==(ConstReverseIterator const& b) const { return (_ptr == b._ptr); };
+	bool operator ==(ConstReverseIterator const& b) const { 
+            return (this->base() == b.base()); 
+    };
 	bool operator !=(ConstReverseIterator const& b) const { return (_ptr != b._ptr); };
-	bool operator >(ConstReverseIterator const& b) const { return (_ptr > b._ptr); };
-	bool operator <(ConstReverseIterator const& b) const { return (_ptr < b._ptr); };
-	bool operator >=(ConstReverseIterator const& b) const { return (_ptr >= b._ptr); };
-	bool operator <=(ConstReverseIterator const& b) const { return (_ptr <= b._ptr); };
+	bool operator >(ConstReverseIterator const& b) const { return (_ptr < b._ptr); };
+	bool operator <(ConstReverseIterator const& b) const { return (_ptr > b._ptr); };
+	bool operator >=(ConstReverseIterator const& b) const { return (_ptr <= b._ptr); };
+	bool operator <=(ConstReverseIterator const& b) const { return (_ptr >= b._ptr); };
 
 	// ARITHMETICS
 	ConstReverseIterator operator +(difference_type b) const{ 
-        reverse<iterator> tmp(this->_ptr + b); 
+        ConstReverseIterator<iterator> tmp(this->_ptr - b); 
         return (tmp); 
     }; 
 
 	ConstReverseIterator operator -(difference_type b) const{ 
-        this->_ptr = this->_ptr + b; 
-        return (*this); 
+        ConstReverseIterator<iterator> tmp(this->_ptr + b); 
+        return (tmp); 
     }; 
 	difference_type operator +(ConstReverseIterator b)const { return (this->_ptr - b._ptr); }; // a + b
 	difference_type operator -(ConstReverseIterator b) { return (b.base() - this->_ptr); }; // a - b
+	difference_type operator +(reverse<iterator> b)const { return (this->_ptr - b._ptr); }; // a + b
+	difference_type operator -(reverse<iterator> b) { return (b.base() - this->_ptr); }; // a - b
 
 	// INCREMENTERS
 	ConstReverseIterator operator ++() { _ptr--; return (*this); };			// ++a
@@ -146,15 +169,25 @@ public:
 
 	//DEREFERENCING & ADDRESS STUFF
 	const_reference operator *() const { return (*_ptr); };								// *a
-	reference operator [](difference_type b) { return (*(_ptr + b)); };					// a[]
-	const_reference operator [](difference_type b) const { return (*(_ptr + b)); };		// a[]
-	iterator operator ->() { return (_ptr); };											// a->b
-	const_iterator operator ->() const { return (_ptr); };											// a->b
+	reference operator [](difference_type b) { return (*(_ptr - b)); };					// a[]
+	const_reference operator [](difference_type b) const { return (*(_ptr - b)); };		// a[]
+	iterator operator ->() { return const_cast<iterator>(this->base()); };											// a->b
+	const_iterator operator ->() const { return &this->operator*(); };											// a->b
 
 
     const_iterator base() const{
         return this->_ptr;
     };	
+
+    operator reverse<iterator>() const {
+        pointer t; 
+        
+        t = const_cast<iterator>(this->base());
+        reverse<iterator> tmp(t);
+        return tmp;
+            
+    }
+
 
 	private:
 
@@ -283,8 +316,8 @@ public:
 
         if (n > this->max_size())
             throw std::length_error("Can't reserve this much.");
-        if (n > this->_capacity)
-        tmp = NULL;
+        if (n < this->_capacity)
+            return ;
         tmp = this->_alloc.allocate(n);
         size_type i = 0;
         while (i < this->_size && i < n){
@@ -357,19 +390,19 @@ public:
     }
 
     reverse_iterator rbegin(){
-        return reverse_iterator(&this->_p[this->_size]);
+        return reverse_iterator(&this->_p[this->_size-1]);
     }
 
-   // const_reverse_iterator	rbegin() const{
-     //   return const_reverse_iterator(&this->_p[this->_size]);
-    //}
+    const_reverse_iterator	rbegin() const{
+        return const_reverse_iterator(&this->_p[this->_size-1]);
+    }
 
     reverse_iterator rend(){
-        return reverse_iterator(this->_p);
+        return reverse_iterator(this->_p - 1);
     }
 
     const_reverse_iterator rend() const{ 
-        return const_reverse_iterator(this->_p);
+        return const_reverse_iterator(this->_p - 1);
     }
 
 
